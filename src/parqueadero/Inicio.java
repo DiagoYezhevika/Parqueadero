@@ -29,6 +29,7 @@ public class Inicio extends javax.swing.JFrame {
     String[] columnaIngreso = {"Placa","Marca","Tarifa","Hora Ingreso"};
     String[] columnaSalida = {"Placa","Marca","Hora Salida","Valor Pagar"};
     GregorianCalendar hora = new GregorianCalendar();
+    int valorPagar = 0;
     
     /**
      * Creates new form Inicio
@@ -335,8 +336,6 @@ public class Inicio extends javax.swing.JFrame {
             jComboBox1.addItem(tmpObjeto.getDescripcion());
         }
         
-        
-        //combo1.addItemListener(this);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -371,16 +370,18 @@ public class Inicio extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        
         String marca = "" , placa = "",tarifa = "", horaI = "";
         int hora = 0, min = 0, i = 0, tam = 0, idTarifa = 0;
-        System.out.println(jComboBox1.getSelectedItem());
+        
         marca = jTextField2.getText();
         placa = jTextField1.getText();
         tarifa = (String) jComboBox1.getSelectedItem();
-        System.out.println(tarifa);
-        hora = getFecha.get(Calendar.HOUR);
+        
+        hora = getFecha.get(Calendar.HOUR_OF_DAY);
         min = getFecha.get(Calendar.MINUTE);
         horaI = String.valueOf(hora) + ":" + String.valueOf(min);
+        
         
         for(Tarifas tmpObjeto : tarifas){
             if(tmpObjeto.getDescripcion().equals(tarifa)){
@@ -390,50 +391,68 @@ public class Inicio extends javax.swing.JFrame {
         
         motos.add(new Moto(placa, marca, horaI, hora, min, idTarifa));
         
-        for(Moto tmpObjeto : motos){
-            if(tmpObjeto.getTipo() == 0){
+        for(int k = 0; k < motos.size(); k++){
+            if(motos.get(k).getTipo() == 0){
                 tam++;
             }
         }
-                
-        dtm=new DefaultTableModel(columnaIngreso, tam);
         
+        System.out.println(tam);       
+        
+        dtm2=new DefaultTableModel(columnaIngreso, tam);
+          
         for(i = 0; i < motos.size();i++){
             if(motos.get(i).getTipo() == 0){
-                dtm.setValueAt(motos.get(i).getPlaca(), i, 0);
-                dtm.setValueAt(motos.get(i).getMarca(), i, 1);
-                dtm.setValueAt(tarifa, i, 2);
-                dtm.setValueAt(motos.get(i).getHoraingreso(), i, 3); 
+                dtm2.setValueAt(motos.get(i).getPlaca(), i, 0);
+                dtm2.setValueAt(motos.get(i).getMarca(), i, 1);
+                dtm2.setValueAt(tarifa, i, 2);
+                dtm2.setValueAt(motos.get(i).getHoraingreso(), i, 3); 
             }   
         }
+        jTable1.setModel(dtm2);
         
-        jTable1.setModel(dtm);
+        System.out.println(motos.size());
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         String marca = "" , placa = "",tarifa = "", horaS = "";
-        int hora = 0, min = 0, i = 0, tam = 0, valorTarifa = 0;
+        int hora = 0, min = 0, i = 0, tam = 0, tam2 = 0, valorTarifa = 0,unidades = 0, j = 0;
         
         placa = jTextField1.getText();
-        hora = getFecha.get(Calendar.HOUR);
+        hora = getFecha.get(Calendar.HOUR_OF_DAY);
         min = getFecha.get(Calendar.MINUTE);
         horaS = String.valueOf(hora) + ":" + String.valueOf(min);
         
-        for(int j = 0;j<motos.size(); j++){
-            if(motos.get(j).getPlaca().equals(placa) ){
+        System.out.println(motos.size());
+        
+        for(j = 0;j < motos.size(); j++){
+            if(motos.get(j).getPlaca().equals(placa) && motos.get(j).getTipo() == 0 ){
                 motos.get(j).setHorasalida(horaS);
                 motos.get(j).setHourS(hora);
                 motos.get(j).setMinS(min);
                 motos.get(j).setTipo(1);
-                j = motos.size();
+                
                 for(Tarifas tmpObjeto : tarifas){
                     if(tmpObjeto.getId() == motos.get(i).getIdTarifa()){
                         valorTarifa = tmpObjeto.getValor();
+                        i++;
                     }
                 }
-                System.out.println(valorTarifa);
+                
+                if((motos.get(j).getHourS() - motos.get(j).getHourI()) > 0){
+                    unidades = motos.get(j).getHourS() - motos.get(j).getHourI();
+                    if(motos.get(j).getMinuteI() < motos.get(j).getMinuteS()){
+                        unidades++;
+                    }
+                }else{
+                    unidades = 1;
+                }
+                valorPagar = unidades * valorTarifa;
+                motos.get(j).setValorPagado(valorPagar);
+                
+                j = motos.size();
             }
         }
         
@@ -443,18 +462,38 @@ public class Inicio extends javax.swing.JFrame {
             }
         }
         
-        dtm2=new DefaultTableModel(columnaSalida, tam);
+        dtm3=new DefaultTableModel(columnaSalida, tam);
+        
         
         for(i = 0; i < motos.size();i++){
             if(motos.get(i).getTipo() == 1){
-                dtm2.setValueAt(motos.get(i).getPlaca(), i, 0);
-                dtm2.setValueAt(motos.get(i).getMarca(), i, 1);
-                dtm2.setValueAt(motos.get(i).getHorasalida(), i, 2);
-                dtm2.setValueAt(motos.get(i).getValorPagado(), i, 3);
+                dtm3.setValueAt(motos.get(i).getPlaca(), i, 0);
+                dtm3.setValueAt(motos.get(i).getMarca(), i, 1);
+                dtm3.setValueAt(motos.get(i).getHorasalida(), i, 2);
+                dtm3.setValueAt(motos.get(i).getValorPagado(), i, 3);
             }
         }
         
-        jTable2.setModel(dtm2);
+        jTable2.setModel(dtm3);
+        
+        for(Moto tmpObjeto : motos){
+            if(tmpObjeto.getTipo() == 1){
+                tam2++;
+            }
+        }
+        
+        dtm2=new DefaultTableModel(columnaIngreso, tam2);
+        
+        for(i = 0; i < motos.size();i++){
+            if(motos.get(i).getTipo() == 0){
+                dtm2.setValueAt(motos.get(i).getPlaca(), i, 0);
+                dtm2.setValueAt(motos.get(i).getMarca(), i, 1);
+                dtm2.setValueAt(tarifa, i, 2);
+                dtm2.setValueAt(motos.get(i).getHoraingreso(), i, 3); 
+            }   
+        }
+        
+        jTable1.setModel(dtm2);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

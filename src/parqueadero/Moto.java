@@ -36,20 +36,6 @@ public class Moto {
         idTarifa = 0;
     }
     
-    Moto(String nuevaPlaca,String nuevaMarca,int nuevoTipo, String nuevaHorai,String nuevaHoras){
-        placa = nuevaPlaca;
-        marca = nuevaMarca;
-        tipo = nuevoTipo;
-        horaIngreso = nuevaHorai;
-        horaSalida = nuevaHoras;
-        hourIngreso = 0;
-        hourSalida = 0;
-        minIngreso = 0;
-        minSalida = 0;
-        valorPagado = 0;
-        idTarifa = 0;
-    }
-    
     Moto(String nuevaPlaca,String nuevaMarca,String nuevaHorai, int hourI, int minuteI,int nuevoIdTarifa){
         placa = nuevaPlaca;
         marca = nuevaMarca;
