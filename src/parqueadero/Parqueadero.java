@@ -22,11 +22,7 @@ public class Parqueadero {
         //Moto aux = new Moto();
         ArrayList<Moto> motos = new ArrayList<Moto>();
         
-        motos.add(new Moto("placa1","maraca1",2,"",""));
-        motos.add(new Moto("placa2","maraca2",2,"",""));
         
-        //m.setPlaca("marca1");
-        motos.add(2, new Moto("placa3","maraca2",2,"",""));
         m.setPlaca("placa4");
         motos.add(3, m);
         m.setPlaca("placa5");
